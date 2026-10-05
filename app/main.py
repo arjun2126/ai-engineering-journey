@@ -1,11 +1,16 @@
-from app.database import get_connection, initialize_database
+import json
+
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from app.database import get_connection, initialize_database
+from app.generator import generate_lesson_plan
+from app.templates import LESSON_PLANS
+
 app = FastAPI(
     title="Tennis Lesson Planner API",
-    description="Creates and saves tennis practice plans by player skill level.",
-    version="0.3.0",
+    description="Creates, generates, and saves tennis practice plans.",
+    version="0.4.0",
 )
 
 
@@ -13,53 +18,7 @@ app = FastAPI(
 def startup():
     initialize_database()
 
-
-LESSON_PLANS = {
-    "beginner": {
-        "duration_minutes": 60,
-        "warmup": "5 minutes of light jogging and dynamic movement.",
-        "drills": [
-            "10 minutes: self-drop forehand and backhand rallies.",
-            "15 minutes: mini-tennis from the service boxes.",
-            "15 minutes: cross-court consistency drill.",
-            "10 minutes: basic serve toss and service-motion practice.",
-        ],
-        "coaching_cues": [
-            "Recover to a balanced ready position after every shot.",
-            "Focus on clean contact in front of your body.",
-        ],
-    },
-    "intermediate": {
-        "duration_minutes": 60,
-        "warmup": "5 minutes of dynamic movement and split-step footwork.",
-        "drills": [
-            "10 minutes: cooperative baseline rally with depth targets.",
-            "15 minutes: cross-court then down-the-line pattern drill.",
-            "15 minutes: serve plus first-ball attack pattern.",
-            "10 minutes: point play starting with a serve.",
-        ],
-        "coaching_cues": [
-            "Use your legs to create balance and controlled power.",
-            "Recover toward the center after each shot.",
-        ],
-    },
-    "advanced": {
-        "duration_minutes": 75,
-        "warmup": "10 minutes of dynamic movement, mobility, and reaction work.",
-        "drills": [
-            "15 minutes: high-tempo directional baseline patterns.",
-            "20 minutes: serve-plus-one and return-plus-one situations.",
-            "20 minutes: transition and net-play decision drills.",
-            "10 minutes: pressure tiebreak scenarios.",
-        ],
-        "coaching_cues": [
-            "Build points with a clear tactical intention.",
-            "Use recovery position based on your opponent's likely reply.",
-        ],
-    },
-}
-
-
+initialize_database()
 class LessonRequest(BaseModel):
     player_name: str = Field(
         min_length=2,
@@ -78,6 +37,12 @@ class LessonRequest(BaseModel):
         le=180,
         description="Lesson duration from 30 to 180 minutes.",
     )
+
+
+def serialize_lesson_plan(row):
+    result = dict(row)
+    result["plan_content"] = json.loads(result["plan_content"])
+    return result
 
 
 @app.get("/health")
@@ -111,6 +76,16 @@ def create_lesson_plan(request: LessonRequest):
             detail="Level must be beginner, intermediate, or advanced.",
         )
 
+    player_name = request.player_name.strip()
+    goal = request.goal.strip()
+
+    generated_plan = generate_lesson_plan(
+        player_name=player_name,
+        level=normalized_level,
+        goal=goal,
+        duration_minutes=request.duration_minutes,
+    )
+
     connection = get_connection()
 
     cursor = connection.execute(
@@ -119,15 +94,17 @@ def create_lesson_plan(request: LessonRequest):
             player_name,
             level,
             goal,
-            duration_minutes
+            duration_minutes,
+            plan_content
         )
-        VALUES (?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?)
         """,
         (
-            request.player_name.strip(),
+            player_name,
             normalized_level,
-            request.goal.strip(),
+            goal,
             request.duration_minutes,
+            json.dumps(generated_plan),
         ),
     )
 
@@ -142,7 +119,7 @@ def create_lesson_plan(request: LessonRequest):
 
     connection.close()
 
-    return dict(row)
+    return serialize_lesson_plan(row)
 
 
 @app.get("/lesson-plans")
@@ -168,7 +145,7 @@ def list_lesson_plans(
 
     connection.close()
 
-    return [dict(row) for row in rows]
+    return [serialize_lesson_plan(row) for row in rows]
 
 
 @app.get("/lesson-plans/{lesson_plan_id}")
@@ -188,4 +165,4 @@ def get_saved_lesson_plan(lesson_plan_id: int):
             detail="Lesson plan not found.",
         )
 
-    return dict(row)
+    return serialize_lesson_plan(row)

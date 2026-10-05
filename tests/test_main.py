@@ -46,9 +46,14 @@ def test_create_and_get_saved_lesson_plan():
     assert create_response.status_code == 201
 
     created_plan = create_response.json()
+
     assert created_plan["player_name"] == "Arjun"
     assert created_plan["level"] == "intermediate"
     assert created_plan["goal"] == "Improve serve consistency"
+    assert created_plan["plan_content"]["generator"] == "rules"
+    assert created_plan["plan_content"]["title"] == (
+        "Intermediate lesson for Arjun"
+    )
 
     lesson_plan_id = created_plan["id"]
 
@@ -56,6 +61,7 @@ def test_create_and_get_saved_lesson_plan():
 
     assert get_response.status_code == 200
     assert get_response.json()["id"] == lesson_plan_id
+
 
 def test_list_saved_lesson_plans():
     client.post(

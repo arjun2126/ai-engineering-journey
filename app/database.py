@@ -26,10 +26,26 @@ def initialize_database():
             level TEXT NOT NULL,
             goal TEXT NOT NULL,
             duration_minutes INTEGER NOT NULL,
+            plan_content TEXT NOT NULL DEFAULT '{}',
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
         """
     )
+
+    existing_columns = {
+        row["name"]
+        for row in connection.execute(
+            "PRAGMA table_info(lesson_plans)"
+        ).fetchall()
+    }
+
+    if "plan_content" not in existing_columns:
+        connection.execute(
+            """
+            ALTER TABLE lesson_plans
+            ADD COLUMN plan_content TEXT NOT NULL DEFAULT '{}'
+            """
+        )
 
     connection.commit()
     connection.close()
