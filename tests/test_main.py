@@ -56,3 +56,34 @@ def test_create_and_get_saved_lesson_plan():
 
     assert get_response.status_code == 200
     assert get_response.json()["id"] == lesson_plan_id
+
+def test_list_saved_lesson_plans():
+    client.post(
+        "/lesson-plans",
+        json={
+            "player_name": "Arjun",
+            "level": "beginner",
+            "goal": "Improve forehand consistency",
+            "duration_minutes": 60,
+        },
+    )
+
+    response = client.get("/lesson-plans?limit=10")
+
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+    assert len(response.json()) >= 1
+
+
+def test_invalid_lesson_duration():
+    response = client.post(
+        "/lesson-plans",
+        json={
+            "player_name": "Arjun",
+            "level": "beginner",
+            "goal": "Improve forehand consistency",
+            "duration_minutes": 10,
+        },
+    )
+
+    assert response.status_code == 422

@@ -1,11 +1,11 @@
 from app.database import get_connection, initialize_database
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException, Query
+from pydantic import BaseModel, Field
 
 app = FastAPI(
     title="Tennis Lesson Planner API",
     description="Creates and saves tennis practice plans by player skill level.",
-    version="0.2.0",
+    version="0.3.0",
 )
 
 
@@ -61,10 +61,23 @@ LESSON_PLANS = {
 
 
 class LessonRequest(BaseModel):
-    player_name: str
+    player_name: str = Field(
+        min_length=2,
+        max_length=100,
+        description="Name of the player.",
+    )
     level: str
-    goal: str
-    duration_minutes: int = 60
+    goal: str = Field(
+        min_length=5,
+        max_length=500,
+        description="The player's training goal.",
+    )
+    duration_minutes: int = Field(
+        default=60,
+        ge=30,
+        le=180,
+        description="Lesson duration from 30 to 180 minutes.",
+    )
 
 
 @app.get("/health")
@@ -130,6 +143,32 @@ def create_lesson_plan(request: LessonRequest):
     connection.close()
 
     return dict(row)
+
+
+@app.get("/lesson-plans")
+def list_lesson_plans(
+    limit: int = Query(
+        default=20,
+        ge=1,
+        le=100,
+        description="Maximum number of saved lesson plans to return.",
+    )
+):
+    connection = get_connection()
+
+    rows = connection.execute(
+        """
+        SELECT *
+        FROM lesson_plans
+        ORDER BY id DESC
+        LIMIT ?
+        """,
+        (limit,),
+    ).fetchall()
+
+    connection.close()
+
+    return [dict(row) for row in rows]
 
 
 @app.get("/lesson-plans/{lesson_plan_id}")
