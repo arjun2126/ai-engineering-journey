@@ -1,7 +1,10 @@
+import os
 import sqlite3
 from pathlib import Path
 
-DATABASE_PATH = Path("tennis_planner.db")
+DATABASE_PATH = Path(
+    os.getenv("DATABASE_PATH", "tennis_planner.db")
+)
 
 
 def get_connection():
@@ -11,6 +14,8 @@ def get_connection():
 
 
 def initialize_database():
+    DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
+
     connection = get_connection()
 
     connection.execute(
