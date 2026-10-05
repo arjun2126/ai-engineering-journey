@@ -1,11 +1,18 @@
+from app.database import get_connection, initialize_database
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI(
     title="Tennis Lesson Planner API",
-    description="Creates simple tennis practice plans by player skill level.",
-    version="0.1.0",
+    description="Creates and saves tennis practice plans by player skill level.",
+    version="0.2.0",
 )
+
+
+@app.on_event("startup")
+def startup():
+    initialize_database()
+
 
 LESSON_PLANS = {
     "beginner": {
@@ -54,7 +61,10 @@ LESSON_PLANS = {
 
 
 class LessonRequest(BaseModel):
+    player_name: str
     level: str
+    goal: str
+    duration_minutes: int = 60
 
 
 @app.get("/health")
@@ -78,7 +88,7 @@ def get_lesson_plan(level: str):
     }
 
 
-@app.post("/lesson-plan")
+@app.post("/lesson-plans", status_code=201)
 def create_lesson_plan(request: LessonRequest):
     normalized_level = request.level.lower().strip()
 
@@ -88,8 +98,55 @@ def create_lesson_plan(request: LessonRequest):
             detail="Level must be beginner, intermediate, or advanced.",
         )
 
-    return {
-        "message": "Lesson plan created.",
-        "level": normalized_level,
-        "plan": LESSON_PLANS[normalized_level],
-    }
+    connection = get_connection()
+
+    cursor = connection.execute(
+        """
+        INSERT INTO lesson_plans (
+            player_name,
+            level,
+            goal,
+            duration_minutes
+        )
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            request.player_name.strip(),
+            normalized_level,
+            request.goal.strip(),
+            request.duration_minutes,
+        ),
+    )
+
+    connection.commit()
+
+    lesson_plan_id = cursor.lastrowid
+
+    row = connection.execute(
+        "SELECT * FROM lesson_plans WHERE id = ?",
+        (lesson_plan_id,),
+    ).fetchone()
+
+    connection.close()
+
+    return dict(row)
+
+
+@app.get("/lesson-plans/{lesson_plan_id}")
+def get_saved_lesson_plan(lesson_plan_id: int):
+    connection = get_connection()
+
+    row = connection.execute(
+        "SELECT * FROM lesson_plans WHERE id = ?",
+        (lesson_plan_id,),
+    ).fetchone()
+
+    connection.close()
+
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Lesson plan not found.",
+        )
+
+    return dict(row)

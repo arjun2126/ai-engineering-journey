@@ -32,14 +32,27 @@ def test_invalid_lesson_level():
     )
 
 
-def test_create_intermediate_lesson_plan():
-    response = client.post(
-        "/lesson-plan",
-        json={"level": "intermediate"},
+def test_create_and_get_saved_lesson_plan():
+    create_response = client.post(
+        "/lesson-plans",
+        json={
+            "player_name": "Arjun",
+            "level": "intermediate",
+            "goal": "Improve serve consistency",
+            "duration_minutes": 60,
+        },
     )
 
-    assert response.status_code == 200
+    assert create_response.status_code == 201
 
-    data = response.json()
-    assert data["message"] == "Lesson plan created."
-    assert data["level"] == "intermediate"
+    created_plan = create_response.json()
+    assert created_plan["player_name"] == "Arjun"
+    assert created_plan["level"] == "intermediate"
+    assert created_plan["goal"] == "Improve serve consistency"
+
+    lesson_plan_id = created_plan["id"]
+
+    get_response = client.get(f"/lesson-plans/{lesson_plan_id}")
+
+    assert get_response.status_code == 200
+    assert get_response.json()["id"] == lesson_plan_id
