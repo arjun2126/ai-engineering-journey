@@ -1,8 +1,17 @@
+from unittest.mock import patch
+
+import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def _no_live_ollama():
+    with patch("app.generator.chat", side_effect=Exception("ollama disabled")):
+        yield
 
 
 def test_health_check():
