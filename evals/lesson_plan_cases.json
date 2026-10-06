@@ -1,0 +1,152 @@
+[
+  {
+    "id": "beginner-serve-30",
+    "input": {
+      "player_name": "Ava",
+      "level": "beginner",
+      "goal": "Improve serve toss and service motion",
+      "duration_minutes": 30
+    },
+    "expected": {
+      "required_terms": ["serve"],
+      "forbidden_terms": ["pickleball", "third shot drop", "kitchen", "dink", "paddle"],
+      "min_drills": 3,
+      "expected_duration_minutes": 30
+    }
+  },
+  {
+    "id": "beginner-forehand-dink-45",
+    "input": {
+      "player_name": "Ben",
+      "level": "beginner",
+      "goal": "Build reliable forehand rallies without resorting to a dink",
+      "duration_minutes": 45
+    },
+    "expected": {
+      "required_terms": ["forehand"],
+      "forbidden_terms": ["pickleball", "third shot drop", "kitchen", "dink", "paddle"],
+      "min_drills": 3,
+      "expected_duration_minutes": 45
+    }
+  },
+  {
+    "id": "beginner-consistency-60",
+    "input": {
+      "player_name": "Cara",
+      "level": "beginner",
+      "goal": "Improve cross-court consistency from the baseline",
+      "duration_minutes": 60
+    },
+    "expected": {
+      "required_terms": ["consistency", "cross-court"],
+      "forbidden_terms": ["pickleball", "third shot drop", "kitchen", "dink", "paddle"],
+      "min_drills": 3,
+      "expected_duration_minutes": 60
+    }
+  },
+  {
+    "id": "beginner-conditioning-30",
+    "input": {
+      "player_name": "Dev",
+      "level": "beginner",
+      "goal": "Build conditioning to stay fresh in long rallies",
+      "duration_minutes": 30
+    },
+    "expected": {
+      "required_terms": ["jogging"],
+      "forbidden_terms": ["pickleball", "third shot drop", "kitchen", "dink", "paddle"],
+      "min_drills": 3,
+      "expected_duration_minutes": 30
+    }
+  },
+  {
+    "id": "intermediate-backhand-45",
+    "input": {
+      "player_name": "Elif",
+      "level": "intermediate",
+      "goal": "Strengthen backhand depth in baseline exchanges",
+      "duration_minutes": 45
+    },
+    "expected": {
+      "required_terms": ["baseline", "depth"],
+      "forbidden_terms": ["pickleball", "third shot drop", "kitchen", "dink", "paddle"],
+      "min_drills": 3,
+      "expected_duration_minutes": 45
+    }
+  },
+  {
+    "id": "intermediate-footwork-60",
+    "input": {
+      "player_name": "Finn",
+      "level": "intermediate",
+      "goal": "Sharpen split-step footwork and first-step quickness",
+      "duration_minutes": 60
+    },
+    "expected": {
+      "required_terms": ["footwork", "split-step"],
+      "forbidden_terms": ["pickleball", "third shot drop", "kitchen", "dink", "paddle"],
+      "min_drills": 3,
+      "expected_duration_minutes": 60
+    }
+  },
+  {
+    "id": "intermediate-third-shot-drop-90",
+    "input": {
+      "player_name": "Gia",
+      "level": "intermediate",
+      "goal": "Replace my third shot drop habit with driving topspin",
+      "duration_minutes": 90
+    },
+    "expected": {
+      "required_terms": ["cross-court", "rally"],
+      "forbidden_terms": ["pickleball", "third shot drop", "kitchen", "dink", "paddle"],
+      "min_drills": 3,
+      "expected_duration_minutes": 90
+    }
+  },
+  {
+    "id": "advanced-matchplay-90",
+    "input": {
+      "player_name": "Hugo",
+      "level": "advanced",
+      "goal": "Close out pressure moments in competitive match-play",
+      "duration_minutes": 90
+    },
+    "expected": {
+      "required_terms": ["tiebreak", "pressure"],
+      "forbidden_terms": ["pickleball", "third shot drop", "kitchen", "dink", "paddle"],
+      "min_drills": 3,
+      "expected_duration_minutes": 90
+    }
+  },
+  {
+    "id": "advanced-volley-60",
+    "input": {
+      "player_name": "Ivy",
+      "level": "advanced",
+      "goal": "Finish points with confident transition volleys",
+      "duration_minutes": 60
+    },
+    "expected": {
+      "required_terms": ["net-play", "transition"],
+      "forbidden_terms": ["pickleball", "third shot drop", "kitchen", "dink", "paddle"],
+      "min_drills": 3,
+      "expected_duration_minutes": 60
+    }
+  },
+  {
+    "id": "advanced-serve-45",
+    "input": {
+      "player_name": "Jay",
+      "level": "advanced",
+      "goal": "Develop a serve plus one attack pattern",
+      "duration_minutes": 45
+    },
+    "expected": {
+      "required_terms": ["serve-plus-one"],
+      "forbidden_terms": ["pickleball", "third shot drop", "kitchen", "dink", "paddle"],
+      "min_drills": 3,
+      "expected_duration_minutes": 45
+    }
+  }
+]
