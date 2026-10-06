@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Design a focused tennis lesson plan in under a minute. Pick a level, set a goal, get warmups, drills, and coaching cues." />
+  <title>Tennis Lesson Planner</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#planner-form">Skip to lesson planner</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="brand-ball" aria-hidden="true"></span>
+        <span class="brand-name">Tennis Lesson Planner</span>
+      </div>
+      <p class="header-tag">Coach-grade practice plans, built around your game.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Personal practice, minus the guesswork</p>
+        <h1 id="hero-title">A sharper lesson plan in under a minute.</h1>
+        <p class="lede">
+          Tell us the player, the level, and the goal. You get a timed warmup,
+          targeted drills, and coaching cues you can take straight to the court.
+        </p>
+        <ul class="hero-points">
+          <li>Warmup, drills, and cues in one plan</li>
+          <li>Beginner to advanced levels</li>
+          <li>30 to 180 minute sessions</li>
+        </ul>
+      </div>
+      <div class="hero-court" aria-hidden="true">
+        <div class="court-lines">
+          <span class="court-ball"></span>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <section class="panel form-panel" aria-labelledby="form-title">
+        <h2 id="form-title">Build your lesson</h2>
+        <form id="planner-form" novalidate>
+          <div class="field">
+            <label for="player-name">Player name</label>
+            <input
+              type="text"
+              id="player-name"
+              name="player_name"
+              autocomplete="off"
+              minlength="2"
+              maxlength="100"
+              required
+              aria-describedby="player-name-hint"
+            />
+            <p class="hint" id="player-name-hint">At least 2 characters.</p>
+          </div>
+
+          <fieldset class="field">
+            <legend>Level</legend>
+            <div class="radio-group">
+              <label class="radio">
+                <input type="radio" name="level" value="beginner" required />
+                <span>Beginner</span>
+              </label>
+              <label class="radio">
+                <input type="radio" name="level" value="intermediate" required />
+                <span>Intermediate</span>
+              </label>
+              <label class="radio">
+                <input type="radio" name="level" value="advanced" required />
+                <span>Advanced</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <label for="goal">Training goal</label>
+            <textarea
+              id="goal"
+              name="goal"
+              rows="3"
+              minlength="5"
+              maxlength="500"
+              required
+              aria-describedby="goal-hint"
+            ></textarea>
+            <p class="hint" id="goal-hint">
+              At least 5 characters. Example: improve first-serve consistency.
+            </p>
+          </div>
+
+          <div class="field">
+            <label for="duration">Duration (minutes)</label>
+            <input
+              type="number"
+              id="duration"
+              name="duration_minutes"
+              min="30"
+              max="180"
+              step="5"
+              value="60"
+              required
+              aria-describedby="duration-hint"
+            />
+            <p class="hint" id="duration-hint">From 30 to 180 minutes.</p>
+          </div>
+
+          <div class="error-panel" id="error-panel" role="alert" hidden>
+            <h3 class="error-title">Something needs attention</h3>
+            <ul class="error-list" id="error-list"></ul>
+          </div>
+
+          <button type="submit" class="button" id="submit-button">
+            <span class="button-label">Create lesson plan</span>
+            <span class="button-spinner" aria-hidden="true" hidden></span>
+          </button>
+        </form>
+      </section>
+
+      <section class="panel result-panel" aria-labelledby="result-title">
+        <h2 id="result-title">Your plan</h2>
+        <p class="status" id="status" aria-live="polite">
+          Your lesson plan will appear here once you submit the form.
+        </p>
+
+        <article id="result" hidden aria-labelledby="plan-title">
+          <div class="plan-head">
+            <h3 id="plan-title" tabindex="-1"></h3>
+            <p class="plan-meta" id="plan-meta"></p>
+          </div>
+          <h4>Warmup</h4>
+          <p id="plan-warmup"></p>
+          <h4>Drills</h4>
+          <ol id="plan-drills"></ol>
+          <h4>Coaching cues</h4>
+          <ul id="plan-cues"></ul>
+          <button type="button" class="button button-secondary" id="again-button">
+            Create another plan
+          </button>
+        </article>
+      </section>
+    </div>
+
+    <footer class="site-footer">
+      <p>Built for players and coaches. Plans are saved to your local library.</p>
+    </footer>
+  </main>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

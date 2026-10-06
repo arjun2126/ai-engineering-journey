@@ -1,6 +1,8 @@
 import json
 
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from app.database import get_connection, initialize_database
@@ -12,6 +14,8 @@ app = FastAPI(
     description="Creates, generates, and saves tennis practice plans.",
     version="0.4.0",
 )
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
 @app.on_event("startup")
@@ -48,6 +52,11 @@ def serialize_lesson_plan(row):
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+
+@app.get("/")
+def home():
+    return FileResponse("app/static/index.html")
 
 
 @app.get("/lesson-plan")
